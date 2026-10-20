@@ -7,6 +7,7 @@ deterministic template report is produced so the app still works.
 import logging
 import os
 import re
+import time
 from typing import Optional, TypedDict
 
 from pydantic import BaseModel, Field
@@ -19,6 +20,8 @@ log = logging.getLogger("heart.agent")
 DISCLAIMER = ("This is an AI screening aid, not a medical diagnosis. It cannot replace an "
               "examination by a qualified clinician. If you have chest pain, fainting or severe "
               "breathlessness, seek urgent care.")
+LLM_BUDGET_S = 36
+MODEL_TIMEOUT_S = 12  # Google rejects deadlines under 10 s
 LOW_CONF = 0.55
 # Classes with little or single-source training data: reported, but flagged as less reliable.
 EXPERIMENTAL = {"aortic_stenosis", "mitral_regurgitation", "mitral_stenosis", "mitral_valve_prolapse", "extrasystole"}
@@ -142,16 +145,21 @@ def write_report(state: State) -> State:
         "- citations: the titles of the excerpts you used.\n\n"
         f"FLAGS: {state['flags']}\nMODEL OUTPUT: {state.get('prediction')}\nSIGNAL METRICS: {m}\n\n"
         f"KNOWLEDGE:\n{kb}")
-    # Try each model in turn: newest first, then older/lighter ones when Google is overloaded.
-    for name in [m.strip() for m in os.getenv("GEMINI_MODELS", DEFAULT_MODELS).split(",") if m.strip()]:
+    # Try each model in turn (newest first). One attempt each, and a hard 36 s budget overall,
+    # so an overloaded Gemini can never stall the app; the template report is the last resort.
+    deadline = time.monotonic() + LLM_BUDGET_S
+    for name in [x.strip() for x in os.getenv("GEMINI_MODELS", DEFAULT_MODELS).split(",") if x.strip()]:
+        left = deadline - time.monotonic()
+        if left < 10:  # not enough time for another full attempt
+            break
         try:
-            llm = ChatGoogleGenerativeAI(model=name, temperature=0.2, max_output_tokens=1500,
-                                         max_retries=2, timeout=45).with_structured_output(Report)
+            llm = ChatGoogleGenerativeAI(model=name, max_output_tokens=1500, max_retries=0,
+                                         timeout=MODEL_TIMEOUT_S).with_structured_output(Report)
             rep = llm.invoke(prompt)
             if rep:
                 return {"report": rep.model_dump()}
         except Exception as e:
-            log.warning("model %s failed: %s: %s", name, type(e).__name__, str(e)[:160])
+            log.warning("model %s failed: %s: %s", name, type(e).__name__, str(e)[:120])
     log.warning("all models failed, using template report")
     return {"report": _template_report(state).model_dump()}
 

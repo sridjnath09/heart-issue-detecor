@@ -1,4 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Demo from "./Demo.jsx";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 const pretty = (s) => s.replace(/_/g, " ");
@@ -17,7 +18,7 @@ function Wave({ metrics }) {
   );
 }
 
-export default function App() {
+function Analyzer() {
   const [busy, setBusy] = useState(false);
   const [res, setRes] = useState(null);
   const [err, setErr] = useState("");
@@ -36,10 +37,11 @@ export default function App() {
 
   const rep = res?.report;
   return (
-    <main>
+    <>
       <header>
         <h1>Heart Sound Analyzer</h1>
-        <p className="muted">Upload a heart sound recording (WAV/MP3/FLAC, 5–60 s) for an AI screening report.</p>
+        <p className="muted">Upload a heart sound recording (WAV/MP3/FLAC, 3–60 s) for an AI screening report.</p>
+        <a className="demolink" href="#/demo">See how it works: a step-by-step demo →</a>
       </header>
 
       <div className="drop" onClick={() => input.current.click()}
@@ -86,6 +88,24 @@ export default function App() {
           <p className="disclaimer">{rep.disclaimer}</p>
         </>
       )}
+    </>
+  );
+}
+
+export default function App() {
+  const [route, setRoute] = useState(window.location.hash);
+  useEffect(() => {
+    const on = () => { setRoute(window.location.hash); window.scrollTo(0, 0); };
+    window.addEventListener("hashchange", on);
+    return () => window.removeEventListener("hashchange", on);
+  }, []);
+  return (
+    <main>
+      <nav className="top">
+        <a href="#/" className={!route.startsWith("#/demo") ? "cur" : ""}>Analyzer</a>
+        <a href="#/demo" className={route.startsWith("#/demo") ? "cur" : ""}>How it works</a>
+      </nav>
+      {route.startsWith("#/demo") ? <Demo key={route} /> : <Analyzer />}
     </main>
   );
 }

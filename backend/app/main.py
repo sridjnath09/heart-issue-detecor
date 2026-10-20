@@ -1,7 +1,11 @@
 import io
+import logging
 import os
+import threading
+import time
 
 import librosa
+import numpy as np
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +23,25 @@ app.add_middleware(CORSMiddleware, allow_origins=os.getenv("ALLOWED_ORIGIN", "ht
                    allow_methods=["*"], allow_headers=["*"])
 classifier = HeartClassifier()
 graph = build_graph()
+log = logging.getLogger("heart.api")
+
+
+def _warm_up():
+    """Run one tiny analysis so first-use setup (imports, JIT) is not paid by a real user."""
+    try:
+        t = time.time()
+        y = (np.random.default_rng(0).standard_normal(4000 * 6) * 0.05).astype(np.float32)
+        analyze_signal(y, 4000)
+        if classifier.available:
+            classifier.predict(y, 4000)
+        log.warning("warm-up done in %.1fs", time.time() - t)
+    except Exception as e:  # warm-up must never stop the server
+        log.warning("warm-up skipped: %s", e)
+
+
+@app.on_event("startup")
+def _start_warm_up():
+    threading.Thread(target=_warm_up, daemon=True).start()
 
 
 @app.get("/health")
@@ -27,8 +50,9 @@ def health():
 
 
 @app.post("/analyze")
-async def analyze(file: UploadFile = File(...)):
-    data = await file.read()
+def analyze(file: UploadFile = File(...)):
+    # Plain `def`: FastAPI runs it in a worker thread, so slow analysis never blocks /health.
+    data = file.file.read(MAX_BYTES + 1)
     if len(data) > MAX_BYTES:
         raise HTTPException(413, "File too large (max 15 MB)")
     try:  # audio is decoded in memory and never written to disk
