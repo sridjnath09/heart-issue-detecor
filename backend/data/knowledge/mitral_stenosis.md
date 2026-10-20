@@ -1,0 +1,3 @@
+# Mitral stenosis (MS)
+Source: 2020 ACC/AHA Valvular Heart Disease Guideline (summary).
+Usually rheumatic. Findings: loud S1, opening snap, and a low-pitched mid-diastolic rumble at the apex, best heard in left lateral position. Complications: left atrial enlargement, atrial fibrillation, thromboembolism, pulmonary hypertension. Symptoms: exertional dyspnoea, palpitations, haemoptysis. Next steps: echocardiography (valve area, gradient), ECG for atrial fibrillation, cardiology referral; anticoagulation if atrial fibrillation; percutaneous balloon commissurotomy or surgery for significant symptomatic stenosis.

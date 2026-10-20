@@ -1,0 +1,3 @@
+# Aortic stenosis (AS)
+Source: 2020 ACC/AHA Valvular Heart Disease Guideline (summary).
+Narrowing of the aortic valve produces a harsh crescendo-decrescendo systolic ejection murmur, best heard at the right upper sternal border and radiating to the carotids; S2 may be soft or single. Later peaking indicates greater severity. Symptoms: exertional angina, syncope, heart failure; these signal a poor prognosis without valve replacement. Diagnosis and severity grading are by echocardiography (valve area, mean gradient, peak velocity). Next steps: echocardiogram, cardiology referral; avoid strenuous exertion if symptomatic; symptomatic severe AS generally warrants aortic valve replacement (surgical or transcatheter).

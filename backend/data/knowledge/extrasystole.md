@@ -1,0 +1,3 @@
+# Extrasystoles (premature beats)
+Source: general cardiology summary (educational).
+Premature atrial or ventricular beats appear as an early beat followed by a compensatory pause, producing an irregular rhythm. They are common and often benign, triggered by caffeine, stress, alcohol or sleep loss, but frequent beats, symptoms, or underlying heart disease merit evaluation. Next steps: 12-lead ECG, possibly 24-48 h Holter monitoring; check electrolytes and thyroid; echocardiography if frequent or if structural disease is suspected. Seek urgent care for fainting, chest pain or sustained racing heartbeat.

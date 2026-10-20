@@ -1,0 +1,14 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+numpy<2.1
+scipy
+librosa==0.10.2.post1
+soundfile
+onnxruntime
+scikit-learn
+pydantic>=2.7
+langgraph>=0.2.60
+langchain-google-genai>=2.0.0
+langchain-core
+python-dotenv

@@ -1,0 +1,3 @@
+# Mitral regurgitation (MR)
+Source: 2020 ACC/AHA Valvular Heart Disease Guideline (summary).
+Backflow through the mitral valve causes a holosystolic (pansystolic) blowing murmur at the apex radiating to the axilla, with a soft S1. Causes include mitral valve prolapse, rheumatic disease, endocarditis, and left ventricular dilation or ischaemia. Chronic severe MR can lead to left atrial enlargement, atrial fibrillation and heart failure; acute MR is an emergency. Next steps: echocardiography to assess mechanism and severity; cardiology referral; surgical or transcatheter repair is considered for severe symptomatic MR or declining LV function.
