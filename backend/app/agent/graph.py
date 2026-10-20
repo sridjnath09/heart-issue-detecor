@@ -170,6 +170,9 @@ def safety_check(state: State) -> State:
         rep["urgency"] = "soon"
     if flags and rep["urgency"] == "routine" and "low_confidence" in flags:
         rep["urgency"] = "soon"
+    top = (state.get("prediction") or {}).get("top_label")
+    if top and top != "normal" and rep["urgency"] == "routine":
+        rep["urgency"] = "soon"  # a non-normal result should never read as "routine"
     rep["disclaimer"] = DISCLAIMER
     rep["flags"] = flags
     return {"report": rep}

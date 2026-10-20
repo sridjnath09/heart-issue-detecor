@@ -99,13 +99,14 @@ export default function App() {
     window.addEventListener("hashchange", on);
     return () => window.removeEventListener("hashchange", on);
   }, []);
+  if (route.startsWith("#/demo")) return <Demo route={route} />;
   return (
     <main>
       <nav className="top">
-        <a href="#/" className={!route.startsWith("#/demo") ? "cur" : ""}>Analyzer</a>
-        <a href="#/demo" className={route.startsWith("#/demo") ? "cur" : ""}>How it works</a>
+        <a href="#/" className="cur">Analyzer</a>
+        <a href="#/demo">How it works</a>
       </nav>
-      {route.startsWith("#/demo") ? <Demo key={route} /> : <Analyzer />}
+      <Analyzer />
     </main>
   );
 }

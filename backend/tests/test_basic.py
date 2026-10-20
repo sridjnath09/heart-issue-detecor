@@ -62,3 +62,10 @@ def test_experimental_class_flagged(monkeypatch):
     y, sr = synth()
     out = build_graph().invoke({"metrics": analyze_signal(y, sr), "prediction": pred})["report"]
     assert "experimental_class" in out["flags"] and any("tentative" in s for s in out["next_steps"])
+
+
+def test_non_normal_never_routine(monkeypatch):
+    from app.agent import graph as g
+    state = {"metrics": {}, "prediction": {"top_label": "murmur", "top_probability": 0.9, "predictions": []},
+             "report": {"urgency": "routine"}, "flags": []}
+    assert g.safety_check(state)["report"]["urgency"] == "soon"
